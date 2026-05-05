@@ -5,21 +5,35 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "skate"
 version = "0.1.0"
+description = "Run a prompt across multiple LLMs and compare outputs side by side in the terminal."
+readme = "README.md"
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 requires-python = ">=3.11"
 dependencies = [
     "click>=8.1",
     "rich>=13.0",
     "litellm>=1.40",
     "httpx>=0.27",
-    "sentence-transformers>=3.0",
 ]
 
 [project.optional-dependencies]
+score = ["sentence-transformers>=3.0"]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.23",
     "ruff>=0.4",
     "mypy>=1.10",
+    "sentence-transformers>=3.0",
 ]
 
 [project.scripts]

@@ -8,7 +8,13 @@ _model = None
 def _get_model():
     global _model
     if _model is None:
-        from sentence_transformers import SentenceTransformer
+        try:
+            from sentence_transformers import SentenceTransformer
+        except ImportError:
+            raise ImportError(
+                "sentence-transformers is required for --score. "
+                "Install it with: pip install 'skate[score]'"
+            )
         _model = SentenceTransformer("all-MiniLM-L6-v2")
     return _model
 
