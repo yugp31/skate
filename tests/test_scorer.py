@@ -1,0 +1,68 @@
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from skate.runner import ModelResult
+from skate.scorer import compute_similarity, readability_stats
+
+
+def _result(model: str, output: str, error: str | None = None) -> ModelResult:
+    return ModelResult(
+        model=model,
+        output=output,
+        tokens_input=0,
+        tokens_output=0,
+        latency_seconds=0.0,
+        cost_usd=0.0,
+        error=error,
+    )
+
+
+def _mock_model(texts: list[str]):
+    import numpy as np
+    embeddings = np.random.rand(len(texts), 384).astype("float32")
+    mock = MagicMock()
+    mock.encode.return_value = embeddings
+    return mock, embeddings
+
+
+def test_compute_similarity_two_models():
+    results = [_result("gpt-4o", "Hello world"), _result("claude", "Hello world")]
+    with patch("skate.scorer._get_model") as mock_get:
+        import numpy as np
+        vec = np.ones(384, dtype="float32")
+        mock_get.return_value.encode.return_value = np.stack([vec, vec])
+        similarity = compute_similarity(results)
+
+    assert ("gpt-4o", "claude") in similarity
+    score = similarity[("gpt-4o", "claude")]
+    assert 0.0 <= score <= 1.0
+
+
+def test_compute_similarity_skips_errors():
+    results = [
+        _result("gpt-4o", "Hello"),
+        _result("claude", "", error="API error"),
+    ]
+    similarity = compute_similarity(results)
+    assert similarity == {}
+
+
+def test_compute_similarity_single_model():
+    results = [_result("gpt-4o", "Hello world")]
+    similarity = compute_similarity(results)
+    assert similarity == {}
+
+
+def test_readability_stats_basic():
+    stats = readability_stats("Hello world. How are you? I am fine.")
+    assert stats["word_count"] == 8
+    assert stats["sentence_count"] == 3
+    assert stats["avg_sentence_length"] == pytest.approx(8 / 3)
+
+
+def test_readability_stats_empty():
+    stats = readability_stats("")
+    assert stats["word_count"] == 0
+    assert stats["sentence_count"] == 1
+    assert stats["avg_sentence_length"] == 0.0

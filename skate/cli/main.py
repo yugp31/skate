@@ -6,6 +6,7 @@ import click
 from skate.exporter import export
 from skate.renderer import render_run
 from skate.runner import run_all
+from skate.scorer import compute_similarity
 
 
 @click.group()
@@ -22,6 +23,7 @@ def cli() -> None:
 @click.option("--temperature", type=float, default=None, help="Sampling temperature.")
 @click.option("--max-tokens", type=int, default=None, help="Max output tokens.")
 @click.option("--output", default=None, help="Save results to file (.json or .csv).")
+@click.option("--score", is_flag=True, default=False, help="Show similarity matrix.")
 def run(
     prompt: str | None,
     models: str,
@@ -31,6 +33,7 @@ def run(
     temperature: float | None,
     max_tokens: int | None,
     output: str | None,
+    score: bool,
 ) -> None:
     if prompt_file:
         with open(prompt_file) as f:
@@ -59,7 +62,8 @@ def run(
     results = asyncio.run(
         run_all(prompt_text, model_list, system=system, temperature=temperature, max_tokens=max_tokens)
     )
-    render_run(prompt_text, results)
+    similarity = compute_similarity(results) if score else None
+    render_run(prompt_text, results, similarity=similarity)
 
     if output:
         export(results, output)
