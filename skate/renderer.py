@@ -6,7 +6,7 @@ from rich.table import Table
 from rich.text import Text
 
 from skate.judge import JudgeResult
-from skate.runner import ModelResult
+from skate.models import ModelResult
 
 console = Console()
 

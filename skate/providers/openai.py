@@ -4,7 +4,7 @@ import litellm
 
 from skate.config import get_api_key
 from skate.providers.base import BaseProvider
-from skate.runner import ModelResult
+from skate.models import ModelResult
 
 
 class OpenAIProvider(BaseProvider):

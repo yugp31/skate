@@ -2,7 +2,8 @@ import asyncio
 
 import pytest
 
-from skate.runner import ModelResult, _make_provider, run_all
+from skate.models import ModelResult
+from skate.runner import _make_provider, run_all
 from skate.providers.anthropic import AnthropicProvider
 from skate.providers.gemini import GeminiProvider
 from skate.providers.ollama import OllamaProvider

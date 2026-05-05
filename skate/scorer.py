@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-from sentence_transformers import SentenceTransformer, util
+from skate.models import ModelResult
 
-from skate.runner import ModelResult
-
-_model: SentenceTransformer | None = None
+_model = None
 
 
-def _get_model() -> SentenceTransformer:
+def _get_model():
     global _model
     if _model is None:
+        from sentence_transformers import SentenceTransformer
         _model = SentenceTransformer("all-MiniLM-L6-v2")
     return _model
 
@@ -19,6 +18,7 @@ def compute_similarity(results: list[ModelResult]) -> dict[tuple[str, str], floa
     if len(valid) < 2:
         return {}
 
+    from sentence_transformers import util
     embeddings = _get_model().encode([r.output for r in valid], convert_to_numpy=True)
     similarity: dict[tuple[str, str], float] = {}
 

@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from skate.judge import JudgeResult, _parse_response, run_judge
-from skate.runner import ModelResult
+from skate.models import ModelResult
 
 
 def _result(model: str, output: str, error: str | None = None) -> ModelResult:

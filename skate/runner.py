@@ -1,22 +1,11 @@
 import asyncio
-from dataclasses import dataclass
 
+from skate.models import ModelResult
 from skate.providers.anthropic import AnthropicProvider
 from skate.providers.base import BaseProvider
 from skate.providers.gemini import GeminiProvider
 from skate.providers.ollama import OllamaProvider
 from skate.providers.openai import OpenAIProvider
-
-
-@dataclass
-class ModelResult:
-    model: str
-    output: str
-    tokens_input: int
-    tokens_output: int
-    latency_seconds: float
-    cost_usd: float
-    error: str | None = None
 
 
 def _make_provider(model: str) -> BaseProvider:

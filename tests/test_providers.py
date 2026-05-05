@@ -42,10 +42,17 @@ def test_gemini_missing_key(monkeypatch):
 def test_ollama_not_running(monkeypatch):
     import httpx
 
-    async def _raise(*args, **kwargs):
-        raise httpx.ConnectError("refused")
+    class _FailClient:
+        def __init__(self, *args, **kwargs):
+            pass
 
-    monkeypatch.setattr("skate.providers.ollama.httpx.AsyncClient", _raise)
+        async def __aenter__(self):
+            raise httpx.ConnectError("refused")
+
+        async def __aexit__(self, *args):
+            pass
+
+    monkeypatch.setattr("skate.providers.ollama.httpx.AsyncClient", _FailClient)
 
     result = asyncio.run(OllamaProvider("ollama/llama3").run("hello"))
 

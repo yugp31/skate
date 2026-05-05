@@ -2,7 +2,7 @@ import csv
 import json
 from pathlib import Path
 
-from skate.runner import ModelResult
+from skate.models import ModelResult
 
 
 def _to_dict(result: ModelResult) -> dict:

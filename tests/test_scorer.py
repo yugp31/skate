@@ -2,7 +2,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from skate.runner import ModelResult
+from skate.models import ModelResult
 from skate.scorer import compute_similarity, readability_stats
 
 
