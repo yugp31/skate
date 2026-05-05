@@ -3,6 +3,7 @@ import sys
 
 import click
 
+from skate.exporter import export
 from skate.renderer import render_run
 from skate.runner import run_all
 
@@ -20,6 +21,7 @@ def cli() -> None:
 @click.option("--system", default=None, help="System prompt applied to all models.")
 @click.option("--temperature", type=float, default=None, help="Sampling temperature.")
 @click.option("--max-tokens", type=int, default=None, help="Max output tokens.")
+@click.option("--output", default=None, help="Save results to file (.json or .csv).")
 def run(
     prompt: str | None,
     models: str,
@@ -28,6 +30,7 @@ def run(
     system: str | None,
     temperature: float | None,
     max_tokens: int | None,
+    output: str | None,
 ) -> None:
     if prompt_file:
         with open(prompt_file) as f:
@@ -57,3 +60,7 @@ def run(
         run_all(prompt_text, model_list, system=system, temperature=temperature, max_tokens=max_tokens)
     )
     render_run(prompt_text, results)
+
+    if output:
+        export(results, output)
+        click.echo(f"Results saved to {output}")
