@@ -4,6 +4,7 @@ import sys
 import click
 
 from skate.exporter import export
+from skate.judge import run_judge
 from skate.renderer import render_run
 from skate.runner import run_all
 from skate.scorer import compute_similarity
@@ -24,6 +25,8 @@ def cli() -> None:
 @click.option("--max-tokens", type=int, default=None, help="Max output tokens.")
 @click.option("--output", default=None, help="Save results to file (.json or .csv).")
 @click.option("--score", is_flag=True, default=False, help="Show similarity matrix.")
+@click.option("--judge", default=None, help="Model to use as judge.")
+@click.option("--judge-criteria", default=None, help="Comma-separated evaluation criteria.")
 def run(
     prompt: str | None,
     models: str,
@@ -34,6 +37,8 @@ def run(
     max_tokens: int | None,
     output: str | None,
     score: bool,
+    judge: str | None,
+    judge_criteria: str | None,
 ) -> None:
     if prompt_file:
         with open(prompt_file) as f:
@@ -63,7 +68,11 @@ def run(
         run_all(prompt_text, model_list, system=system, temperature=temperature, max_tokens=max_tokens)
     )
     similarity = compute_similarity(results) if score else None
-    render_run(prompt_text, results, similarity=similarity)
+
+    criteria = [c.strip() for c in judge_criteria.split(",")] if judge_criteria else None
+    judge_result = asyncio.run(run_judge(prompt_text, results, judge, criteria)) if judge else None
+
+    render_run(prompt_text, results, similarity=similarity, judge_result=judge_result)
 
     if output:
         export(results, output)
