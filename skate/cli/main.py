@@ -2,12 +2,21 @@ import asyncio
 import sys
 
 import click
+import httpx
 
+from skate.config import get_api_key, set_api_key, show_config
 from skate.exporter import export
 from skate.judge import run_judge
 from skate.renderer import render_run
 from skate.runner import run_all
 from skate.scorer import compute_similarity
+
+_KNOWN_MODELS: dict[str, list[str]] = {
+    "openai": ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "o1-mini"],
+    "anthropic": ["claude-opus-4-5", "claude-sonnet-4-5", "claude-haiku-4-5-20251001"],
+    "gemini": ["gemini-1.5-pro", "gemini-1.5-flash"],
+    "ollama": ["ollama/llama3", "ollama/mistral", "ollama/phi3"],
+}
 
 
 @click.group()
@@ -77,3 +86,81 @@ def run(
     if output:
         export(results, output)
         click.echo(f"Results saved to {output}")
+
+
+@cli.group()
+def models_cmd() -> None:
+    pass
+
+
+cli.add_command(models_cmd, name="models")
+
+
+@models_cmd.command(name="list")
+def models_list() -> None:
+    for provider, names in _KNOWN_MODELS.items():
+        click.echo(f"\n{provider}")
+        for name in names:
+            click.echo(f"  {name}")
+
+
+@models_cmd.command(name="check")
+@click.argument("provider", required=False)
+def models_check(provider: str | None) -> None:
+    if provider == "ollama":
+        _check_ollama()
+        return
+
+    keys = {
+        "openai": "OPENAI_API_KEY",
+        "anthropic": "ANTHROPIC_API_KEY",
+        "gemini": "GEMINI_API_KEY",
+    }
+    for name, env_var in keys.items():
+        value = get_api_key(env_var)
+        status = "set" if value else "not set"
+        symbol = "+" if value else "-"
+        click.echo(f"  [{symbol}] {name}: {env_var} {status}")
+
+
+def _check_ollama() -> None:
+    try:
+        response = httpx.get("http://localhost:11434/api/tags", timeout=3.0)
+        response.raise_for_status()
+        data = response.json()
+        local_models: list[str] = [m["name"] for m in data.get("models", [])]
+        click.echo("Ollama is running.")
+        if local_models:
+            click.echo("Local models:")
+            for m in local_models:
+                click.echo(f"  ollama/{m}")
+        else:
+            click.echo("No local models found.")
+    except httpx.ConnectError:
+        click.echo("Ollama is not running at localhost:11434.", err=True)
+    except Exception as exc:
+        click.echo(f"Ollama check failed: {exc}", err=True)
+
+
+@cli.group()
+def config() -> None:
+    pass
+
+
+@config.command(name="set")
+@click.argument("key")
+@click.argument("value")
+def config_set(key: str, value: str) -> None:
+    set_api_key(key, value)
+    click.echo(f"{key} saved.")
+
+
+@config.command(name="show")
+def config_show() -> None:
+    data = show_config()
+    for key, value in data.items():
+        if value:
+            masked = value[:8] + "..." if len(value) > 8 else value
+            click.echo(f"  {key}: {masked}")
+        else:
+            click.echo(f"  {key}: not set")
