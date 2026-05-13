@@ -27,4 +27,6 @@ def export(results: list[ModelResult], path: str) -> None:
             writer.writeheader()
             writer.writerows(records)
     else:
-        dest.write_text(json.dumps(records, indent=2, ensure_ascii=False), encoding="utf-8")
+        dest.write_text(
+            json.dumps(records, indent=2, ensure_ascii=False), encoding="utf-8"
+        )

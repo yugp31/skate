@@ -28,10 +28,15 @@ async def _run_one(
     provider = _make_provider(model)
     try:
         return await asyncio.wait_for(
-            provider.run(prompt, system=system, temperature=temperature, max_tokens=max_tokens),
+            provider.run(
+                prompt,
+                system=system,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            ),
             timeout=30.0,
         )
-    except asyncio.TimeoutError:
+    except TimeoutError:
         return ModelResult(
             model=model,
             output="",

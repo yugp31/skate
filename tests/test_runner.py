@@ -1,13 +1,11 @@
 import asyncio
 
-import pytest
-
 from skate.models import ModelResult
-from skate.runner import _make_provider, run_all
 from skate.providers.anthropic import AnthropicProvider
 from skate.providers.gemini import GeminiProvider
 from skate.providers.ollama import OllamaProvider
 from skate.providers.openai import OpenAIProvider
+from skate.runner import _make_provider, run_all
 
 
 def test_make_provider_routing():
@@ -32,7 +30,9 @@ def test_run_all_returns_one_result_per_model(monkeypatch):
     monkeypatch.setattr(OpenAIProvider, "run", _fake_run)
     monkeypatch.setattr(AnthropicProvider, "run", _fake_run)
 
-    results = asyncio.run(run_all("test prompt", ["gpt-4o-mini", "claude-haiku-4-5-20251001"]))
+    results = asyncio.run(
+        run_all("test prompt", ["gpt-4o-mini", "claude-haiku-4-5-20251001"])
+    )
 
     assert len(results) == 2
     assert all(r.output == "hello" for r in results)
@@ -55,7 +55,7 @@ def test_run_all_timeout(monkeypatch):
                 provider.run(prompt),
                 timeout=0.05,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return ModelResult(
                 model=model,
                 output="",

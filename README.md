@@ -10,6 +10,44 @@ pip install -e ".[dev]"
 
 Python 3.11 or newer is required.
 
+## Supported Providers
+
+Skate supports multiple LLM providers through a unified interface:
+
+- **OpenAI**: All GPT models.
+- **Anthropic**: Claude 3, 3.5, and 4.5 models.
+- **Google Gemini**: 1.5 Pro and Flash models.
+- **Ollama**: Local models running on your machine.
+- **Generic**: Any provider supported by LiteLLM can be configured.
+
+## Configuration
+
+Skate looks for API keys in environment variables or a configuration file located at `~/.skate/config.json`.
+
+### Environment Variables
+
+You can set your keys as standard environment variables:
+
+```bash
+export OPENAI_API_KEY="your-key"
+export ANTHROPIC_API_KEY="your-key"
+export GEMINI_API_KEY="your-key"
+```
+
+### Configuration File
+
+Alternatively, create a file at `~/.skate/config.json`:
+
+```json
+{
+  "OPENAI_API_KEY": "sk-...",
+  "ANTHROPIC_API_KEY": "sk-ant-...",
+  "GEMINI_API_KEY": "..."
+}
+```
+
+Use `skate models check` to verify your configuration.
+
 ## Quickstart
 
 ```bash
