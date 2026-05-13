@@ -41,6 +41,9 @@ skate = "skate.cli.main:cli"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+markers = [
+    "integration: hits real APIs, skipped if key is missing",
+]
 
 [tool.ruff]
 target-version = "py311"
