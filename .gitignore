@@ -1,24 +1,28 @@
 # Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-dist/
+*$py.class
+*.so
+
+# Build & Distribution
 build/
+dist/
+*.egg-info/
+egg-info/
+
+# Virtual Environments
 .venv/
 venv/
-.env
+ENV/
+env/
 
-# Testing & Linting
-.mypy_cache/
-.ruff_cache/
-.pytest_cache/
-
-# IDEs and Editors
-.idea/
+# IDEs
 .vscode/
-*.swp
-*.swo
+.idea/
 
-# OS
+# Project specific
+.env
+.skate/config.json
+results.json
+results.csv
 .DS_Store
-Thumbs.db

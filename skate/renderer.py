@@ -72,7 +72,11 @@ def render_similarity_matrix(
             if row_model == col_model:
                 cells.append("1.000")
             else:
-                key = (row_model, col_model) if (row_model, col_model) in similarity else (col_model, row_model)
+                key = (
+                    (row_model, col_model)
+                    if (row_model, col_model) in similarity
+                    else (col_model, row_model)
+                )
                 cells.append(f"{similarity.get(key, 0.0):.3f}")
         table.add_row(row_model, *cells)
 

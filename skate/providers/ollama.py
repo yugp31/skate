@@ -2,8 +2,8 @@ import time
 
 import httpx
 
-from skate.providers.base import BaseProvider
 from skate.models import ModelResult
+from skate.providers.base import BaseProvider
 
 _BASE_URL = "http://localhost:11434"
 

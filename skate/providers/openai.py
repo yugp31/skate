@@ -3,8 +3,8 @@ import time
 import litellm
 
 from skate.config import get_api_key
-from skate.providers.base import BaseProvider
 from skate.models import ModelResult
+from skate.providers.base import BaseProvider
 
 
 class OpenAIProvider(BaseProvider):

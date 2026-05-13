@@ -31,7 +31,9 @@ class JudgeResult:
     scores: dict[str, dict[str, float]] = field(default_factory=dict)
 
 
-def _build_prompt(prompt: str, results: list[ModelResult], criteria: list[str] | None) -> str:
+def _build_prompt(
+    prompt: str, results: list[ModelResult], criteria: list[str] | None
+) -> str:
     labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     outputs_block = "\n".join(
         f"Model {labels[i]} ({r.model}): {r.output}"

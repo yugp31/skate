@@ -11,7 +11,9 @@ from skate.providers.openai import OpenAIProvider
 
 def test_openai_missing_key(monkeypatch):
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
-    monkeypatch.setattr("skate.config._CONFIG_PATH", __import__("pathlib").Path("/nonexistent"))
+    monkeypatch.setattr(
+        "skate.config._CONFIG_PATH", __import__("pathlib").Path("/nonexistent")
+    )
 
     result = asyncio.run(OpenAIProvider("gpt-4o-mini").run("hello"))
 
@@ -21,7 +23,9 @@ def test_openai_missing_key(monkeypatch):
 
 def test_anthropic_missing_key(monkeypatch):
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    monkeypatch.setattr("skate.config._CONFIG_PATH", __import__("pathlib").Path("/nonexistent"))
+    monkeypatch.setattr(
+        "skate.config._CONFIG_PATH", __import__("pathlib").Path("/nonexistent")
+    )
 
     result = asyncio.run(AnthropicProvider("claude-haiku-4-5-20251001").run("hello"))
 
@@ -31,7 +35,9 @@ def test_anthropic_missing_key(monkeypatch):
 
 def test_gemini_missing_key(monkeypatch):
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
-    monkeypatch.setattr("skate.config._CONFIG_PATH", __import__("pathlib").Path("/nonexistent"))
+    monkeypatch.setattr(
+        "skate.config._CONFIG_PATH", __import__("pathlib").Path("/nonexistent")
+    )
 
     result = asyncio.run(GeminiProvider("gemini-1.5-flash").run("hello"))
 
@@ -78,7 +84,9 @@ def test_anthropic_integration():
     if not os.environ.get("ANTHROPIC_API_KEY"):
         pytest.skip("ANTHROPIC_API_KEY not set")
 
-    result = asyncio.run(AnthropicProvider("claude-haiku-4-5-20251001").run("Say hello in one word."))
+    result = asyncio.run(
+        AnthropicProvider("claude-haiku-4-5-20251001").run("Say hello in one word.")
+    )
 
     assert result.error is None
     assert len(result.output) > 0
@@ -90,7 +98,9 @@ def test_gemini_integration():
     if not os.environ.get("GEMINI_API_KEY"):
         pytest.skip("GEMINI_API_KEY not set")
 
-    result = asyncio.run(GeminiProvider("gemini-1.5-flash").run("Say hello in one word."))
+    result = asyncio.run(
+        GeminiProvider("gemini-1.5-flash").run("Say hello in one word.")
+    )
 
     assert result.error is None
     assert len(result.output) > 0

@@ -1,8 +1,6 @@
 import asyncio
 import json
-from unittest.mock import AsyncMock, patch
-
-import pytest
+from unittest.mock import patch
 
 from skate.judge import JudgeResult, _parse_response, run_judge
 from skate.models import ModelResult
@@ -33,13 +31,21 @@ def test_parse_response_plain_json():
 
 
 def test_parse_response_strips_code_fences():
-    payload = "```json\n{\"winner\": \"claude\", \"reasoning\": \"Better.\", \"scores\": {}}\n```"
+    payload = (
+        "```json\n"
+        '{"winner": "claude", "reasoning": "Better.", "scores": {}}\n'
+        "```"
+    )
     result = _parse_response(payload)
     assert result.winner == "claude"
 
 
 def test_parse_response_strips_plain_fences():
-    payload = "```\n{\"winner\": \"gpt-4o\", \"reasoning\": \"Good.\", \"scores\": {}}\n```"
+    payload = (
+        "```\n"
+        '{"winner": "gpt-4o", "reasoning": "Good.", "scores": {}}\n'
+        "```"
+    )
     result = _parse_response(payload)
     assert result.winner == "gpt-4o"
 
@@ -58,7 +64,11 @@ def test_run_judge_success():
 
     with patch("skate.providers.openai.OpenAIProvider.run", _fake_run):
         judge_result = asyncio.run(
-            run_judge("What is 2+2?", [_result("gpt-4o", "4"), _result("claude", "Four")], "gpt-4o")
+            run_judge(
+                "What is 2+2?",
+                [_result("gpt-4o", "4"), _result("claude", "Four")],
+                "gpt-4o",
+            )
         )
 
     assert isinstance(judge_result, JudgeResult)
@@ -80,7 +90,9 @@ def test_run_judge_handles_provider_error(capsys):
 
     with patch("skate.providers.openai.OpenAIProvider.run", _fail):
         judge_result = asyncio.run(
-            run_judge("prompt", [_result("gpt-4o", "a"), _result("claude", "b")], "gpt-4o")
+            run_judge(
+                "prompt", [_result("gpt-4o", "a"), _result("claude", "b")], "gpt-4o"
+            )
         )
 
     assert judge_result is None
@@ -95,7 +107,9 @@ def test_run_judge_handles_bad_json(capsys):
 
     with patch("skate.providers.openai.OpenAIProvider.run", _bad_json):
         judge_result = asyncio.run(
-            run_judge("prompt", [_result("gpt-4o", "a"), _result("claude", "b")], "gpt-4o")
+            run_judge(
+                "prompt", [_result("gpt-4o", "a"), _result("claude", "b")], "gpt-4o"
+            )
         )
 
     assert judge_result is None
