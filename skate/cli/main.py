@@ -5,11 +5,6 @@ import click
 import httpx
 
 from skate.config import get_api_key, set_api_key, show_config
-from skate.exporter import export
-from skate.judge import run_judge
-from skate.renderer import render_run
-from skate.runner import run_all
-from skate.scorer import compute_similarity
 
 _KNOWN_MODELS: dict[str, list[str]] = {
     "openai": ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "o1-mini"],
@@ -71,6 +66,12 @@ def run(
         except KeyError as exc:
             click.echo(f"Missing template variable: {exc}", err=True)
             sys.exit(1)
+
+    from skate.exporter import export
+    from skate.judge import run_judge
+    from skate.renderer import render_run
+    from skate.runner import run_all
+    from skate.scorer import compute_similarity
 
     model_list = [m.strip() for m in models.split(",") if m.strip()]
     results = asyncio.run(
