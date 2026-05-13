@@ -8,6 +8,8 @@ if TYPE_CHECKING:
 
 
 class BaseProvider(ABC):
+    model: str
+
     @abstractmethod
     async def run(
         self,
